@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMPTS PARA ESTUDAR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --red: #FF0000;
+            --yellow: #FFFF00;
+            --blue: #0000FF;
+            --green: #00FF00;
+            --pink: #FF00FF;
+            --gray: #808080;
+        }
+
+        body {
+            font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            overflow-x: hidden;
+            min-height: 100vh;
+            cursor: crosshair;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: 1;
+            pointer-events: none;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,.1) 2px, rgba(0,0,0,.1) 4px);
+        }
+
+        /* Header */
+        header {
+            background: var(--black);
+            color: var(--white);
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 8px solid var(--red);
+            transform: skewY(-1deg);
+            margin-bottom: 2rem;
+        }
+
+        header > * {
+            transform: skewY(1deg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            background: var(--yellow);
+            color: var(--black);
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            transform: rotate(-2deg);
+            box-shadow: 8px 8px 0 var(--red);
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .logo:hover {
+            transform: rotate(-2deg) scale(1.05);
+            box-shadow: 12px 12px 0 var(--red);
+        }
+
+        .logo:active {
+            transform: rotate(-2deg) scale(0.95);
+            box-shadow: 4px 4px 0 var(--red);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: -0.05em;
+        }
+
+        .hero h1 span:nth-child(1) {
+            display: block;
+            background: var(--red);
+            color: var(--white);
+            padding: 0.5rem;
+            transform: rotate(-1deg);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero h1 span:nth-child(2) {
+            display: block;
+            background: var(--black);
+            color: var(--yellow);
+            padding: 0.5rem;
+            transform: rotate(1deg);
+            box-shadow: 8px 8px 0 var(--blue);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--yellow);
+            padding: 1rem;
+            display: inline-block;
+            transform: rotate(-1deg);
+            margin-top: 2rem;
+            border: 4px solid var(--black);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: var(--black);
+            color: var(--white);
+            padding: 2rem;
+            position: relative;
+            transform: rotate(-1deg);
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:nth-child(2) {
+            background: var(--red);
+            transform: rotate(1deg);
+        }
+
+        .stat-card:nth-child(3) {
+            background: var(--blue);
+            transform: rotate(-0.5deg);
+        }
+
+        .stat-card:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 10;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 900;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        /* Controls */
+        .controls {
+            margin-bottom: 3rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--white);
+            border: 6px solid var(--black);
+            color: var(--black);
+            outline: none;
+            transition: all 0.1s ease;
+        }
+
+        .search-box input:focus {
+            background: var(--yellow);
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0 var(--black);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            pointer-events: none;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            padding: 1.5rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: var(--white);
+            border: 6px solid var(--black);
+            color: var(--black);
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--pink);
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0 var(--black);
+        }
+
+        .filter-btn.active {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* Prompts Grid */
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .prompt-card {
+            background: var(--white);
+            border: 6px solid var(--black);
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prompt-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+            z-index: 0;
+        }
+
+        .prompt-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .prompt-card:hover {
+            transform: translate(-8px, -8px);
+            box-shadow: 16px 16px 0 var(--red);
+        }
+
+        .prompt-card:hover * {
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .prompt-card:hover .prompt-number {
+            background: var(--yellow);
+            color: var(--black);
+        }
+
+        .prompt-card:hover .tag {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .prompt-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--black);
+            color: var(--white);
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transform: rotate(-5deg);
+            transition: all 0.2s ease;
+        }
+
+        .prompt-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .prompt-preview {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .prompt-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.5rem 1rem;
+            background: var(--black);
+            color: var(--white);
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            border: 8px solid var(--black);
+            padding: 3rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 0 8px var(--red);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: var(--black);
+            color: var(--yellow);
+            font-weight: 900;
+            font-size: 3rem;
+            transform: rotate(-5deg);
+        }
+
+        .close-btn {
+            background: var(--red);
+            border: none;
+            color: var(--white);
+            font-size: 2rem;
+            font-weight: 900;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--black);
+            transform: rotate(90deg);
+        }
+
+        .modal-body h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .prompt-full {
+            background: var(--yellow);
+            border: 6px solid var(--black);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            transform: rotate(-1deg);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.5rem 2.5rem;
+            border: 6px solid var(--black);
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .btn-primary {
+            background: var(--green);
+        }
+
+        .btn-primary:hover {
+            background: var(--black);
+            color: var(--green);
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0 var(--green);
+        }
+
+        .btn-secondary {
+            background: var(--pink);
+        }
+
+        .btn-secondary:hover {
+            background: var(--black);
+            color: var(--pink);
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0 var(--pink);
+        }
+
+        .btn-chatgpt {
+            background: var(--blue);
+            color: var(--white);
+        }
+
+        .btn-chatgpt:hover {
+            background: var(--black);
+            color: var(--blue);
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0 var(--blue);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--black);
+            color: var(--yellow);
+            padding: 1.5rem 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 6px solid var(--yellow);
+            transform: translateX(500px) rotate(2deg);
+            transition: transform 0.2s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(0) rotate(-2deg);
+        }
+
+        /* Glitch effect */
+        @keyframes glitch {
+            0% {
+                text-shadow: 0.05em 0 0 var(--red), -0.05em -0.025em 0 var(--green),
+                    0.025em 0.05em 0 var(--blue);
+            }
+            14% {
+                text-shadow: 0.05em 0 0 var(--red), -0.05em -0.025em 0 var(--green),
+                    0.025em 0.05em 0 var(--blue);
+            }
+            15% {
+                text-shadow: -0.05em -0.025em 0 var(--red), 0.025em 0.025em 0 var(--green),
+                    -0.05em -0.05em 0 var(--blue);
+            }
+            49% {
+                text-shadow: -0.05em -0.025em 0 var(--red), 0.025em 0.025em 0 var(--green),
+                    -0.05em -0.05em 0 var(--blue);
+            }
+            50% {
+                text-shadow: 0.025em 0.05em 0 var(--red), 0.05em 0 0 var(--green),
+                    0 -0.05em 0 var(--blue);
+            }
+            99% {
+                text-shadow: 0.025em 0.05em 0 var(--red), 0.05em 0 0 var(--green),
+                    0 -0.05em 0 var(--blue);
+            }
+            100% {
+                text-shadow: -0.025em 0 0 var(--red), -0.025em -0.025em 0 var(--green),
+                    -0.025em -0.05em 0 var(--blue);
+            }
+        }
+
+        .logo:hover {
+            animation: glitch 0.5s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .prompts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 2rem;
+            }
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--black);
+            color: var(--yellow);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--white);
+            border: 4px solid var(--black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--black);
+            border: 4px solid var(--white);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--red);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">📚 PROMPTS<br>PARA ESTUDAR</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">TODOS</button>
+                <button class="filter-btn" data-filter="favoritos">⭐ FAVORITOS</button>
+                <button class="filter-btn" onclick="generatePDF()" style="background: var(--red); color: var(--white);">
+                    📄 BAIXAR PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <p>OpenAI <a href="https://www.linkedin.com/posts/chatgpt-for-education_here-are-the-top-20-study-chats-from-students-activity-7326637082238484481-O2tK?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAMjtEMBgxXC8WIKbqhvzIViIL-bjW_7E3k">revelou</a> os 20 prompts mais populares entre estudantes no mundo <br>confira a versão em Português! 🇧🇷</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="BUSCAR PROMPTS...">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+
+        <div class="prompts-grid" id="promptsGrid">
+            <!-- Prompts serão inseridos aqui -->
+        </div>
+    </div>
+
+    <div class="modal" id="promptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-number" id="modalNumber"></div>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <h2 id="modalTitle"></h2>
+                <div class="prompt-full" id="modalPrompt"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyPrompt()">
+                        📋 COPIAR
+                    </button>
+                    <button class="btn btn-chatgpt" onclick="openInChatGPT()">
+                        🤖 ABRIR NO CHATGPT
+                    </button>
+                    <button class="btn btn-secondary" onclick="toggleFavorite()">
+                        ⭐ FAVORITAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <center>
+        <div class="stat-card">
+        <p>👋🏼 Vibes by Tiago Maluta</p></div>
+    </center>
+    <script>
+        // Dados dos prompts
+        const prompts = [
+            {
+                id: 1,
+                title: "Aprender Ensinando",
+                preview: "Me faça perguntas sobre [tópico] para que eu possa praticar explicando os conceitos principais para você.",
+                full: "Quero aprender ensinando. Me faça perguntas sobre [tópico] para que eu possa praticar explicando os conceitos principais para você.",
+                tags: ["ATIVO", "PRÁTICA"],
+                category: "teaching"
+            },
+            {
+                id: 2,
+                title: "Níveis de Compreensão",
+                preview: "Explique [tópico] para mim em 3 níveis diferentes de compreensão, do ensino fundamental ao nível universitário.",
+                full: "Explique [tópico] para mim em 3 níveis diferentes de compreensão, do ensino fundamental ao nível universitário.",
+                tags: ["EXPLICAÇÃO", "NÍVEIS"],
+                category: "understanding"
+            },
+            {
+                id: 3,
+                title: "Teste de Tese",
+                preview: "Sugira pontos de vista opostos existentes e possíveis falhas na minha lógica.",
+                full: "Quero testar minha tese antes de continuar escrevendo. Sugira pontos de vista opostos existentes e possíveis falhas na minha lógica.",
+                tags: ["ESCRITA", "CRÍTICA"],
+                category: "writing"
+            },
+            {
+                id: 4,
+                title: "Coach de Apresentação",
+                preview: "Aja como meu coach de oratória e me dê feedback para que eu possa melhorar.",
+                full: "Quero praticar minha apresentação final para [curso]. Aja como meu coach de oratória e me dê feedback para que eu possa melhorar.",
+                tags: ["ORATÓRIA", "FEEDBACK"],
+                category: "presentation"
+            },
+            {
+                id: 5,
+                title: "Princípio 80/20",
+                preview: "Identifique e compartilhe os 20% mais importantes dos aprendizados desse tema.",
+                full: "Quero aprender sobre [tópico]. Identifique e compartilhe os 20% mais importantes dos aprendizados desse tema que vão me ajudar a entender 80% dele.",
+                tags: ["EFICIÊNCIA", "FOCO"],
+                category: "efficiency"
+            },
+            {
+                id: 6,
+                title: "Slides Interativos",
+                preview: "Pegar os slides e me ajudar a aprender o conteúdo de uma forma mais rápida e interessante.",
+                full: "Você pode pegar os slides a seguir e me ajudar a aprender o conteúdo de uma forma mais rápida e interessante?",
+                tags: ["SLIDES", "VISUAL"],
+                category: "visual"
+            },
+            {
+                id: 7,
+                title: "Visualização de Conceitos",
+                preview: "Crie uma imagem para me ajudar a visualizar [conceito].",
+                full: "Crie uma imagem para me ajudar a visualizar [conceito].",
+                tags: ["VISUAL", "CONCEITOS"],
+                category: "visual"
+            },
+            {
+                id: 8,
+                title: "Gamificação",
+                preview: "Crie um jogo para me ajudar a alcançar [objetivos de aprendizagem].",
+                full: "Estou tendo dificuldade para entender [tópico] e quero que você crie um jogo para me ajudar a alcançar [objetivos de aprendizagem].",
+                tags: ["JOGOS", "DIVERSÃO"],
+                category: "games"
+            },
+            {
+                id: 9,
+                title: "Simplificação",
+                preview: "Traduza esse trecho denso para uma linguagem que eu possa entender.",
+                full: "Traduza esse trecho denso para uma linguagem que eu possa entender.",
+                tags: ["SIMPLES", "CLAREZA"],
+                category: "understanding"
+            },
+            {
+                id: 10,
+                title: "Pesquisa Acadêmica",
+                preview: "Forneça uma lista abrangente de artigos de revistas acadêmicas de alto nível sobre [tópico].",
+                full: "Forneça uma lista abrangente de artigos de revistas acadêmicas de alto nível sobre [tópico]. Inclua o título, autores, data e link para o artigo completo, além de um resumo dos principais achados e sua relevância para o tema.",
+                tags: ["PESQUISA", "ARTIGOS"],
+                category: "research"
+            },
+            {
+                id: 11,
+                title: "Avaliação de Tarefa",
+                preview: "Aja como meu professor e avalie minha tarefa de acordo com o critério de avaliação.",
+                full: "Aja como meu professor e avalie minha tarefa de acordo com o critério de avaliação.",
+                tags: ["AVALIAÇÃO", "FEEDBACK"],
+                category: "assessment"
+            },
+            {
+                id: 12,
+                title: "Citação APA",
+                preview: "Por favor, cite este site para mim no formato APA: [fonte].",
+                full: "Por favor, cite este site para mim no formato APA: [fonte].",
+                tags: ["CITAÇÃO", "FORMATO"],
+                category: "writing"
+            },
+            {
+                id: 13,
+                title: "Guia Passo a Passo",
+                preview: "Me dê um guia passo a passo para terminar [projeto].",
+                full: "Me dê um guia passo a passo para terminar [projeto]. Faça os passos o mais pequenos e alcançáveis possível.",
+                tags: ["GUIA", "ORGANIZAÇÃO"],
+                category: "planning"
+            },
+            {
+                id: 14,
+                title: "Checklist de Tarefas",
+                preview: "Procure todas as regras e exigências nesta tarefa e faça um checklist fácil de entender.",
+                full: "Procure todas as regras e exigências nesta tarefa e faça um checklist fácil de entender.",
+                tags: ["CHECKLIST", "TAREFAS"],
+                category: "planning"
+            },
+            {
+                id: 15,
+                title: "Estudo Adaptativo",
+                preview: "Hoje não estou com disposição. Me ajude a entender essa aula levando isso em consideração.",
+                full: "Hoje não estou com disposição. Me ajude a entender essa aula levando isso em consideração.",
+                tags: ["BEM-ESTAR", "ADAPTAÇÃO"],
+                category: "wellbeing"
+            },
+            {
+                id: 16,
+                title: "Flashcards",
+                preview: "Transforme isso em perguntas e respostas no estilo flashcards.",
+                full: "Transforme isso em perguntas e respostas no estilo flashcards.",
+                tags: ["MEMÓRIA", "REVISÃO"],
+                category: "memorization"
+            },
+            {
+                id: 17,
+                title: "Simulado de Prova",
+                preview: "Crie um simulado para mim baseado no material. Me faça cada pergunta uma por vez.",
+                full: "Tenho uma prova chegando para [curso]. Crie um simulado para mim baseado no material. Me faça cada pergunta uma por vez. A prova será no formato [formato da prova], então siga esse estilo.",
+                tags: ["SIMULADO", "PREPARAÇÃO"],
+                category: "assessment"
+            },
+            {
+                id: 18,
+                title: "Prática de Idiomas",
+                preview: "Escreva frases em espanhol com gramática incorreta e eu vou tentar corrigi-las.",
+                full: "Escreva frases em espanhol com gramática incorreta e eu vou tentar corrigi-las. Por favor, forneça as correções em português.",
+                tags: ["IDIOMAS", "PRÁTICA"],
+                category: "languages"
+            },
+            {
+                id: 19,
+                title: "Motivação",
+                preview: "Estou estudando [tópico]. Me motive.",
+                full: "Estou estudando [tópico]. Me motive.",
+                tags: ["MOTIVAÇÃO", "ENERGIA"],
+                category: "wellbeing"
+            },
+            {
+                id: 20,
+                title: "Múltiplas Perspectivas",
+                preview: "Encontre 3 especialistas com pontos de vista diferentes e compare suas opiniões.",
+                full: "Estou escrevendo sobre [tópico] e quero considerar múltiplas perspectivas. Encontre 3 especialistas com pontos de vista diferentes e compare suas opiniões.",
+                tags: ["ANÁLISE", "VISÕES"],
+                category: "research"
+            }
+        ];
+
+        // Estado
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        let currentPrompt = null;
+        let currentFilter = 'all';
+
+        // Renderizar prompts
+        function renderPrompts(filter = 'all', searchTerm = '') {
+            console.log('renderPrompts chamada - filter:', filter, 'searchTerm:', searchTerm);
+            const grid = document.getElementById('promptsGrid');
+            
+            if (!grid) {
+                console.error('Grid não encontrado!');
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            let filteredPrompts = prompts;
+            
+            if (filter === 'favoritos') {
+                filteredPrompts = prompts.filter(p => favorites.includes(p.id));
+            }
+            
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filteredPrompts = filteredPrompts.filter(p => 
+                    p.title.toLowerCase().includes(term) ||
+                    p.full.toLowerCase().includes(term) ||
+                    p.tags.some(tag => tag.toLowerCase().includes(term))
+                );
+            }
+            
+            console.log('Prompts filtrados:', filteredPrompts.length);
+            
+            filteredPrompts.forEach((prompt) => {
+                const card = document.createElement('div');
+                card.className = 'prompt-card';
+                card.innerHTML = `
+                    <div class="prompt-number">${prompt.id}</div>
+                    <h3 class="prompt-title">${prompt.title}</h3>
+                    <p class="prompt-preview">${prompt.preview}</p>
+                    <div class="prompt-tags">
+                        ${prompt.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                card.onclick = () => openModal(prompt);
+                grid.appendChild(card);
+            });
+            
+            if (filteredPrompts.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; padding: 3rem; font-size: 1.5rem; font-weight: 900;">NENHUM PROMPT ENCONTRADO</div>';
+            }
+        }
+
+        // Modal
+        function openModal(prompt) {
+            currentPrompt = prompt;
+            document.getElementById('modalNumber').textContent = prompt.id;
+            document.getElementById('modalTitle').textContent = prompt.title;
+            document.getElementById('modalPrompt').textContent = prompt.full;
+            document.getElementById('promptModal').style.display = 'block';
+            
+            // Atualizar botão de favoritos
+            const favBtn = document.querySelector('.btn-secondary');
+            if (favorites.includes(prompt.id)) {
+                favBtn.textContent = '⭐ REMOVER';
+            } else {
+                favBtn.textContent = '⭐ FAVORITAR';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('promptModal').style.display = 'none';
+        }
+
+        // Copiar prompt
+        function copyPrompt() {
+            if (!currentPrompt) return;
+            
+            navigator.clipboard.writeText(currentPrompt.full).then(() => {
+                showToast('PROMPT COPIADO! 📋');
+            });
+        }
+
+        // Abrir no ChatGPT
+        function openInChatGPT() {
+            if (!currentPrompt) return;
+            
+            // Codificar o prompt para URL
+            const encodedPrompt = encodeURIComponent(currentPrompt.full);
+            const chatGPTUrl = `https://chat.com/?q=${encodedPrompt}`;
+            
+            // Abrir em nova aba
+            window.open(chatGPTUrl, '_blank');
+            
+            showToast('ABRINDO NO CHATGPT... 🤖');
+        }
+
+        // Favoritos
+        function toggleFavorite() {
+            if (!currentPrompt) return;
+            
+            const index = favorites.indexOf(currentPrompt.id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showToast('REMOVIDO DOS FAVORITOS');
+            } else {
+                favorites.push(currentPrompt.id);
+                showToast('FAVORITADO! ⭐');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            // Atualizar botão
+            const favBtn = document.querySelector('.btn-secondary');
+            if (favorites.includes(currentPrompt.id)) {
+                favBtn.textContent = '⭐ REMOVER';
+            } else {
+                favBtn.textContent = '⭐ FAVORITAR';
+            }
+            
+            // Re-renderizar se estiver no filtro de favoritos
+            if (currentFilter === 'favoritos') {
+                renderPrompts(currentFilter, document.getElementById('searchInput').value);
+            }
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderPrompts(currentFilter, e.target.value);
+        });
+
+        // Filtros
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderPrompts(currentFilter, document.getElementById('searchInput').value);
+            });
+        });
+
+        // Fechar modal ao clicar fora
+        window.onclick = (event) => {
+            const modal = document.getElementById('promptModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Efeito de cursor personalizado
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+               // Gerar PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            // Configurações
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 20;
+            const lineHeight = 7;
+            let yPosition = margin;
+            
+            // Cores
+            const black = [0, 0, 0];
+            const red = black;
+            const yellow = black;
+            const blue = black;
+            
+            //const red = [255, 0, 0];
+            //const yellow = [255, 255, 0];
+            //const blue = [0, 0, 255];
+            
+            // Função auxiliar para adicionar retângulo colorido
+            function addColorBlock(x, y, w, h, color) {
+                doc.setFillColor(...color);
+                doc.rect(x, y, w, h, 'F');
+            }
+            
+            // Header com estilo brutalista
+            addColorBlock(0, 0, pageWidth, 40, black);
+            
+            // Título principal
+            doc.setTextColor(255, 255, 0);
+            doc.setFontSize(32);
+            doc.setFont('helvetica', 'bold');
+            doc.text('PROMPTS PARA ESTUDAR', pageWidth / 2, 20, { align: 'center' });
+            
+            // Subtítulo
+            doc.setFontSize(14);
+            doc.text('', pageWidth / 2, 30, { align: 'center' });
+            
+            // Reset posição Y
+            yPosition = 50;
+            
+            // Adicionar blocos coloridos decorativos
+            addColorBlock(margin - 10, yPosition - 5, 5, 15, red);
+            addColorBlock(pageWidth - margin + 5, yPosition - 5, 5, 15, blue);
+            
+            // Texto introdutório
+            doc.setTextColor(...black);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('OpenAI revelou os 20 prompts mais populares entre estudantes no mundo', pageWidth / 2, yPosition, { align: 'center' });
+
+            yPosition += 5;
+            doc.setTextColor(...black);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Confira a versão em Português!', pageWidth / 2, yPosition, { align: 'center' });
+            
+            yPosition += 15;
+            
+            // Adicionar prompts
+            prompts.forEach((prompt, index) => {
+                // Verificar se precisa de nova página
+                if (yPosition > pageHeight - 40) {
+                    doc.addPage();
+                    yPosition = margin;
+                    
+                    // Header da nova página
+                    addColorBlock(0, 0, pageWidth, 20, black);
+                    doc.setTextColor(255, 255, 0);
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('PROMPTS PARA ESTUDAR - CONTINUAÇÃO', pageWidth / 2, 12, { align: 'center' });
+                    yPosition = 30;
+                }
+                
+                // Número do prompt com fundo colorido
+                const colors = [red, blue, yellow, [0, 0, 0], [0, 0, 0]];
+                //const colors = [red, blue, yellow, [255, 0, 255], [0, 255, 0]];
+                const color = colors[index % colors.length];
+                
+                addColorBlock(margin - 5, yPosition - 5, 15, 10, color);
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text(String(prompt.id), margin + 2, yPosition + 2);
+                
+                // Título do prompt
+                doc.setTextColor(...black);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                const titleX = margin + 20;
+                doc.text(prompt.title.toUpperCase(), titleX, yPosition + 2);
+                
+                yPosition += lineHeight;
+                
+                // Prompt completo (quebra de linha automática)
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                const lines = doc.splitTextToSize(prompt.full, pageWidth - margin * 2 - 20);
+                doc.text(lines, titleX, yPosition);
+                
+                yPosition += lines.length * 4 + 5;
+                
+                // Tags
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'bold');
+                const tagsText = prompt.tags.join(' | ');
+                doc.text(tagsText, titleX, yPosition);
+                
+                yPosition += 10;
+                
+                // Linha separadora
+                if (index < prompts.length - 1) {
+                    doc.setDrawColor(...black);
+                    doc.setLineWidth(0.5);
+                    doc.line(margin, yPosition - 3, pageWidth - margin, yPosition - 3);
+                }
+            });
+            
+            // Footer
+            const footerY = pageHeight - 15;
+            addColorBlock(0, footerY - 5, pageWidth, 20, black);
+            doc.setTextColor(255, 255, 0);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('', pageWidth / 2, footerY, { align: 'center' });
+            
+            // Adicionar blocos decorativos nas laterais
+            for (let i = 0; i < 3; i++) {
+                const blockY = 60 + i * 70;
+                addColorBlock(5, blockY, 5, 20, red);
+                addColorBlock(pageWidth - 10, blockY + 10, 5, 20, blue);
+            }
+            
+            yPosition += 5;
+            doc.setTextColor(...black);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Tiago Maluta', pageWidth / 2, yPosition, { align: 'center' });
+            
+
+            // Salvar PDF
+            doc.save('top-20-prompts-traduzido.pdf');
+            
+            showToast('PDF BAIXADO! 📄');
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM carregado!');
+            console.log('Inicializando app...');
+            console.log('Total de prompts:', prompts.length);
+            renderPrompts();
+            
+            // Debug - verificar se o grid existe
+            const grid = document.getElementById('promptsGrid');
+            console.log('Grid encontrado:', grid ? 'SIM' : 'NÃO');
+        });
+    </script>
+</body>
+</html>
